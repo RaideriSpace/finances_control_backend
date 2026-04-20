@@ -1,19 +1,34 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { Transacao } from './modules/transacoes/entities/transacao.entity'; // ajuste o caminho
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TransacoesModule } from './modules/transacoes/transacoes.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
-      entities: [Transacao],
-      synchronize: false,
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
-    TypeOrmModule.forFeature([Transacao]),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USER'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        ssl: true,
+        connectTimeoutMS: 15000,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+          keepalives: 1,
+          keepalives_idle: 60,
+        },
+      }),
+    }),
     TransacoesModule,
   ],
 })

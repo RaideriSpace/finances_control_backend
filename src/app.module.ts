@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { Transacao } from './transacao.entity'; // ajuste o caminho
-import { TransacoesModule } from './transacoes.module';
+import { Transacao } from './modules/transacoes/entities/transacao.entity'; // ajuste o caminho
+import { TransacoesModule } from './modules/transacoes/transacoes.module';
 
 @Module({
   imports: [

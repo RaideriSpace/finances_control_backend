@@ -10,10 +10,10 @@ import {
   Post,
 } from '@nestjs/common';
 import { TransacoesService } from './transacoes.service';
-import { Transacao } from './transacao.entity';
+import { Transacao } from './entities/transacao.entity';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateTransacaoDto } from './create-transacao.dto';
-import { UpdateTransacaoDto } from './update-transacao.dto';
+import { UpdateTransacaoDto } from './dto/update-transacao.dto';
+import { CreateTransacaoDto } from './dto/create-transacao.dto';
 
 @ApiTags('Transacoes')
 @Controller('transacoes')

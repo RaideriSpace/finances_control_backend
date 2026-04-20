@@ -8,10 +8,11 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { TransacoesService } from './transacoes.service';
 import { Transacao } from './entities/transacao.entity';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { UpdateTransacaoDto } from './dto/update-transacao.dto';
 import { CreateTransacaoDto } from './dto/create-transacao.dto';
 
@@ -30,6 +31,17 @@ export class TransacoesController {
   @ApiOperation({ summary: 'Buscar uma transação pelo ID' })
   async findOne(@Param('id') id: string): Promise<Transacao | null> {
     return this.transacoesService.findOne(id);
+  }
+
+  @Get('busca/nome')
+  @ApiOperation({ summary: 'Buscar transações por nome parcial ou total' })
+  @ApiQuery({
+    name: 'nome',
+    required: true,
+    description: 'Trecho do nome da compra',
+  })
+  async findByName(@Query('nome') nome: string): Promise<Transacao[]> {
+    return this.transacoesService.findByName(nome);
   }
 
   @Post()

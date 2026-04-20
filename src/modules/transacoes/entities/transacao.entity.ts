@@ -8,7 +8,10 @@ export class Transacao {
   @Column()
   compra!: string;
 
-  @Column({ name: 'razao_social' }) // Mapeia o snake_case do banco
+  @Column() 
+  estabelecimento!: string;
+
+  @Column({ name: 'razao_social' })
   razao_social!: string;
 
   @Column({

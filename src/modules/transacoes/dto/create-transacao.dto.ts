@@ -1,10 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateTransacaoDto {
-  @ApiProperty({ example: 'Assinatura Netflix' })
+  @ApiProperty({ example: 'Pães e Frios' })
   compra!: string;
 
-  @ApiProperty({ example: 'Netflix Entretenimento' })
+  @ApiProperty({ example: 'Ifood - Padaria do Bairro' })
+  estabelecimento?: string;
+
+  @ApiProperty({ example: 'IFOOD' })
   razao_social!: string;
 
   @ApiProperty({

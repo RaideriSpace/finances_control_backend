@@ -50,6 +50,9 @@ export class Transacao {
   @Column({ type: 'date' })
   data_inicio!: Date;
 
+  @Column({ type: 'date' }) 
+  data_pagamento!: string;
+
   @Column({ type: 'date' })
   data_fim!: Date;
 }

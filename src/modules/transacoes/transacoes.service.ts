@@ -29,9 +29,50 @@ export class TransacoesService {
     });
   }
 
-  async create(dto: CreateTransacaoDto): Promise<Transacao> {
-    const novaTransacao = this.repository.create(dto);
-    return await this.repository.save(novaTransacao);
+  async create(payload: CreateTransacaoDto) {
+    // Se for débito, o fluxo é simples: 1 parcela, data_pagamento é hoje
+    if (payload.tipo === 'debito' || payload.parcelamento <= 1) {
+      const dataPagamentoString = new Date(payload.data_inicio)
+        .toISOString()
+        .split('T')[0];
+
+      const transacao = {
+        ...payload,
+        data_pagamento: dataPagamentoString,
+      };
+
+      return await this.repository.save(transacao as any);
+    }
+
+    // Se for crédito parcelado
+    const transacoesParaSalvar: any[] = [];
+
+    for (let i = 0; i < payload.parcelamento; i++) {
+      const dataRef = new Date(payload.data_inicio);
+      let dataPagamentoDaParcela: string;
+
+      // Calculamos a data ANTES de montar o objeto
+      if (i === 0) {
+        dataPagamentoDaParcela = new Date(payload.data_inicio)
+          .toISOString()
+          .split('T')[0];
+      } else {
+        dataRef.setMonth(dataRef.getMonth() + i);
+        dataRef.setDate(5);
+        dataPagamentoDaParcela = dataRef.toISOString().split('T')[0];
+      }
+
+      // Agora montamos o objeto de uma vez só! O TypeScript aceita perfeitamente.
+      const novaParcela = {
+        ...payload,
+        parcela: i + 1,
+        data_pagamento: dataPagamentoDaParcela,
+      };
+
+      transacoesParaSalvar.push(novaParcela);
+    }
+
+    return await this.repository.save(transacoesParaSalvar as any);
   }
 
   async update(id: string, dto: UpdateTransacaoDto): Promise<Transacao> {

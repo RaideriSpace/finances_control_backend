@@ -30,15 +30,18 @@ export class TransacoesService {
   }
 
   async create(payload: CreateTransacaoDto) {
-    // Se for débito, o fluxo é simples: 1 parcela, data_pagamento é hoje
-    if (payload.tipo === 'debito' || payload.parcelamento <= 1) {
-      const dataPagamentoString = new Date(payload.data_inicio)
-        .toISOString()
-        .split('T')[0];
+    // 1. Garantimos que a data_inicio é uma string YYYY-MM-DD
+    const dataInicioString = new Date(payload.data_inicio)
+      .toISOString()
+      .split('T')[0];
 
+    // Se for débito, o fluxo é simples: 1 parcela, data_pagamento e data_fim são hoje
+    if (payload.tipo === 'debito' || payload.parcelamento <= 1) {
       const transacao = {
         ...payload,
-        data_pagamento: dataPagamentoString,
+        data_inicio: dataInicioString,
+        data_fim: dataInicioString, // <-- AUTO-CALCULADO
+        data_pagamento: dataInicioString, // <-- AUTO-CALCULADO
       };
 
       return await this.repository.save(transacao as any);
@@ -47,25 +50,29 @@ export class TransacoesService {
     // Se for crédito parcelado
     const transacoesParaSalvar: any[] = [];
 
+    // CALCULANDO A DATA FIM DA COMPRA (Mês atual + total de parcelas - 1)
+    const dataFimRef = new Date(payload.data_inicio);
+    dataFimRef.setMonth(dataFimRef.getMonth() + (payload.parcelamento - 1));
+    dataFimRef.setDate(5); // A última parcela sempre cai no dia 5
+    const dataFimString = dataFimRef.toISOString().split('T')[0];
+
     for (let i = 0; i < payload.parcelamento; i++) {
       const dataRef = new Date(payload.data_inicio);
       let dataPagamentoDaParcela: string;
 
-      // Calculamos a data ANTES de montar o objeto
       if (i === 0) {
-        dataPagamentoDaParcela = new Date(payload.data_inicio)
-          .toISOString()
-          .split('T')[0];
+        dataPagamentoDaParcela = dataInicioString;
       } else {
         dataRef.setMonth(dataRef.getMonth() + i);
         dataRef.setDate(5);
         dataPagamentoDaParcela = dataRef.toISOString().split('T')[0];
       }
 
-      // Agora montamos o objeto de uma vez só! O TypeScript aceita perfeitamente.
       const novaParcela = {
         ...payload,
         parcela: i + 1,
+        data_inicio: dataInicioString,
+        data_fim: dataFimString, // <-- INSERINDO A DATA CALCULADA
         data_pagamento: dataPagamentoDaParcela,
       };
 

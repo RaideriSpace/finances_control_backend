@@ -16,7 +16,7 @@ export class Transacao {
 
   @Column({
     type: 'enum',
-    enum: ['pagamento', 'transferência', 'depósito', 'investimento', 'saque'],
+    enum: ['pagamento', 'transferência', 'depósito', 'investimento', 'saque', 'compra'],
   })
   acao!: string;
 
@@ -31,7 +31,7 @@ export class Transacao {
 
   @Column({
     type: 'enum',
-    enum: ['picpay', 'nubank', 'inter', 'mercado_pago', 'amazon', 'outro'],
+    enum: ['picpay', 'swile', 'nubank', 'inter', 'mercado_pago', 'amazon', 'outro'],
   })
   cartao!: string;
 

@@ -11,7 +11,14 @@ export class CreateTransacaoDto {
   razao_social!: string;
 
   @ApiProperty({
-    enum: ['pagamento', 'transferência', 'depósito', 'investimento', 'saque'],
+    enum: [
+      'pagamento',
+      'transferência',
+      'depósito',
+      'investimento',
+      'saque',
+      'compra',
+    ],
   })
   acao!: string;
 
@@ -25,7 +32,15 @@ export class CreateTransacaoDto {
   classificacao!: string;
 
   @ApiProperty({
-    enum: ['picpay', 'nubank', 'inter', 'mercado_pago', 'amazon', 'outro'],
+    enum: [
+      'picpay',
+      'swile',
+      'nubank',
+      'inter',
+      'mercado_pago',
+      'amazon',
+      'outro',
+    ],
   })
   cartao!: string;
 

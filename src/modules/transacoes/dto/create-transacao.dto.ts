@@ -4,12 +4,6 @@ export class CreateTransacaoDto {
   @ApiProperty({ example: 'Pães e Frios' })
   compra!: string;
 
-  @ApiProperty({ example: 'Ifood - Padaria do Bairro' })
-  estabelecimento?: string;
-
-  @ApiProperty({ example: 'IFOOD' })
-  razao_social!: string;
-
   @ApiProperty({
     enum: [
       'pagamento',
@@ -22,14 +16,11 @@ export class CreateTransacaoDto {
   })
   acao!: string;
 
-  @ApiProperty()
-  tipo_1!: string;
+  @ApiProperty({ example: 'Alimentação' })
+  classificacao_1!: string;
 
-  @ApiPropertyOptional({ default: null })
-  tipo_2?: string;
-
-  @ApiProperty()
-  classificacao!: string;
+  @ApiPropertyOptional({ example: 'Delivery', default: null })
+  classificacao_2?: string;
 
   @ApiProperty({
     enum: [
@@ -59,6 +50,12 @@ export class CreateTransacaoDto {
   @ApiProperty({ example: '2026-04-20' })
   data_inicio!: Date;
 
-  @ApiProperty({ example: '2026-04-20' })
+  @ApiProperty({ example: '2026-05-20' })
   data_fim!: Date;
+
+  @ApiPropertyOptional({ example: 'Ifood - Padaria do Bairro' })
+  local?: string;
+
+  @ApiPropertyOptional({ example: '2026-04-20' })
+  data_pagamento?: string;
 }

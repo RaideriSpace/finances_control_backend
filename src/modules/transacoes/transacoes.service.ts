@@ -24,7 +24,8 @@ export class TransacoesService {
     return await this.repository.find({
       where: [
         { compra: ILike(`%${nome}%`) },
-        { estabelecimento: ILike(`%${nome}%`) },
+        // Substituído 'estabelecimento' por 'local'
+        { local: ILike(`%${nome}%`) },
       ],
     });
   }

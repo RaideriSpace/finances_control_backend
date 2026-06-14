@@ -84,12 +84,6 @@ export class TransacoesService {
   }
 
   async update(id: string, dto: UpdateTransacaoDto): Promise<Transacao> {
-    const transacaoExistente = await this.repository.findOneBy({ id });
-
-    if (!transacaoExistente) {
-      throw new NotFoundException(`Transação com ID ${id} não encontrada`);
-    }
-
     const transacao = await this.repository.preload({
       id: id,
       ...dto,
@@ -99,21 +93,14 @@ export class TransacoesService {
       throw new NotFoundException(`Transação com ID ${id} não encontrada`);
     }
 
-    // Se a data_inicio foi alterada, atualiza data_pagamento para o mesmo valor
-    const dataInicioString = (d: Date | string) =>
-      new Date(d).toISOString().split('T')[0];
-
-    if (
-      dto.data_inicio &&
-      dataInicioString(dto.data_inicio) !==
-        dataInicioString(transacaoExistente.data_inicio)
-    ) {
-      transacao.data_pagamento = dataInicioString(dto.data_inicio);
+    if (dto.data_inicio) {
+      transacao.data_pagamento = new Date(dto.data_inicio)
+        .toISOString()
+        .split('T')[0];
     }
 
     return await this.repository.save(transacao);
   }
-
   async remove(id: string): Promise<void> {
     const result = await this.repository.delete(id);
 

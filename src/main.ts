@@ -19,9 +19,13 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
 
+  // Antes desta whitelist, `enableCors()` sem opções liberava qualquer origem.
+  // O deploy no Render não tem ALLOWED_ORIGINS configurada, então o default
+  // precisa incluir o domínio real de produção na Vercel — senão toda chamada
+  // feita do navegador (fora do fetch server-side do Next) quebra por CORS.
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',')
     .map((origin) => origin.trim())
-    .filter(Boolean) ?? ['http://localhost:3000'];
+    .filter(Boolean) ?? ['http://localhost:3000', 'https://raifinances.vercel.app'];
   app.enableCors({ origin: allowedOrigins });
 
   const config = new DocumentBuilder()
